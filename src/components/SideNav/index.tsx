@@ -1,13 +1,11 @@
-import {Dashboard, FormatListBulleted} from '@mui/icons-material';
 import {Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from '@mui/material';
 import Link from 'next/link';
 
-const links = [
-  {label: 'Dashboard', icon: <Dashboard/>, href: '/'},
-  {label: 'Products', icon: <FormatListBulleted/>, href: '/'},
-];
-
-export default function SideNav({open}: { open: boolean }) {
+export default function SideNav({links, open, pathname}: {
+  links: { label: string, icon: React.ReactNode, href: string }[],
+  open: boolean,
+  pathname: string
+}) {
   return (
     <Drawer
       variant="persistent"
@@ -19,8 +17,8 @@ export default function SideNav({open}: { open: boolean }) {
       <Box>
         <List>
           {links.map(({label, icon, href}, index) => (
-            <ListItem key={index}>
-              <ListItemButton href={href} component={Link}>
+            <ListItem key={index} disablePadding>
+              <ListItemButton href={href} selected={pathname == href} component={Link}>
                 <ListItemIcon>{icon}</ListItemIcon>
                 <ListItemText primary={label}/>
               </ListItemButton>
