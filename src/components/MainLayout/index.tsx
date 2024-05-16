@@ -58,7 +58,6 @@ export default function MainLayout({children}: {
           {pathSections.map((section, index) => {
             const last = index === pathSections.length - 1;
             const to = `${pathSections.slice(0, index + 1).join('/')}`;
-            console.log(to);
 
             return last ? (
               <Typography key={index} color="text.primary">{breadcrumbMap[to]}</Typography>
