@@ -26,7 +26,7 @@ const HeaderOffset = styled('div')(({theme}) => theme.mixins.toolbar);
 export default function MainLayout({children}: {
   children: React.ReactNode
 }) {
-  const [navOpen, setNavOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
   const pathname = usePathname();
   const pathSections = pathname.split('/');
 
@@ -34,23 +34,10 @@ export default function MainLayout({children}: {
     <>
       <Header handleDrawerToggle={() => setNavOpen(!navOpen)}/>
       <HeaderOffset/>
-      <SideNav links={links} open={navOpen} pathname={pathname}/>
+      <SideNav links={links} open={navOpen} onClose={() => setNavOpen(false)} pathname={pathname}/>
       <Box component="main" sx={{
-        flexGrow: 1,
+        paddingX: theme.spacing(3),
         paddingY: theme.spacing(1),
-        paddingX: theme.spacing(2),
-        transition: theme.transitions.create('margin', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        marginLeft: '0px',
-        ...(navOpen && {
-          transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-          marginLeft: {xs: '0px', sm: '256px'},
-        })
       }}>
 
         {/* Page Breadcrumbs */}
