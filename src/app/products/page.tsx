@@ -1,10 +1,11 @@
 'use client';
 
-import {Add} from '@mui/icons-material';
-import {Button, Stack} from '@mui/material';
-import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {Add, Upload} from '@mui/icons-material';
+import {Button} from '@mui/material';
+import {DataGrid, GridColDef, GridRowModesModel, GridRowsProp, GridSlots, GridToolbarContainer} from '@mui/x-data-grid';
+import {useState} from 'react';
 
-const rows = [
+const initialRows: GridRowsProp = [
   {id: 1, sku: '11H-12462-00', description: '', quantity: 15, minQuantity: 5, price: 32.5, location: '35A'},
   {id: 2, sku: '1A0-26242-01', description: '', quantity: 6, minQuantity: 5, price: 10.5, location: '24F'},
   {id: 3, sku: '1RC-15411-01', description: '', quantity: 35, minQuantity: 5, price: 119, location: '64G'},
@@ -18,47 +19,63 @@ const rows = [
 
 ];
 
-// TODO add different currencies
-const priceFormatter: GridColDef['valueFormatter'] = (value: number) => `£${value.toFixed(2)}`;
+interface EditToolbarProps {
+  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
+  setRowModesModel: (
+    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
+  ) => void;
+}
 
-const columns: GridColDef<(typeof rows)[number]>[] = [
-  {field: 'sku', headerName: 'SKU', width: 128},
-  {field: 'description', headerName: 'Description'},
-  {field: 'quantity', headerName: 'Qty'},
-  {field: 'minQuantity', headerName: 'Min Qty'},
-  {field: 'price', headerName: 'Price', width: 112, align: 'right', headerAlign: 'right', valueFormatter: priceFormatter},
-  {field: 'location', headerName: 'Location'},
-  {field: 'tags', headerName: 'Tags'},
-];
+function EditToolbar(props: EditToolbarProps) {
+  const {setRows, setRowModesModel} = props;
+
+  const handleAddProduct = () => {
+    setRows((oldRows) => [...oldRows,]);
+    setRowModesModel((oldModel) => ({...oldModel,}));
+  };
+
+  return (
+    <GridToolbarContainer>
+      <Button color="primary" startIcon={<Add/>} onClick={handleAddProduct}>
+        New product
+      </Button>
+      <Button color="primary" startIcon={<Upload/>} onClick={handleAddProduct}>
+        Import products
+      </Button>
+    </GridToolbarContainer>
+  );
+}
 
 export default function ProductsPage() {
+  const [rows, setRows] = useState(initialRows);
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  // TODO add different currencies
+  const priceFormatter: GridColDef['valueFormatter'] = (value: number) => `£${value.toFixed(2)}`;
+
+  const columns: GridColDef[] = [
+    {field: 'sku', headerName: 'SKU', width: 128},
+    {field: 'description', headerName: 'Description', flex: 1},
+    {field: 'quantity', headerName: 'Available Quantity', align: 'right', headerAlign: 'right'},
+    {field: 'quantityOrdered', headerName: 'Ordered Quantity', align: 'right', headerAlign: 'right'},
+    {field: 'minQuantity', headerName: 'Min Qty', align: 'right', headerAlign: 'right'},
+    {field: 'price', headerName: 'Price', width: 112, align: 'right', headerAlign: 'right', valueFormatter: priceFormatter},
+    {field: 'location', headerName: 'Location'},
+    {field: 'tags', headerName: 'Tags'},
+  ];
+
   return (
-    <>
-      <Stack
-        spacing={1}
-        direction="row"
-        alignItems="center"
-        useFlexGap
-        justifyContent="end"
-        sx={{mb: 1}}
-      >
-        <Button variant="outlined" sx={{gap: 1}}>
-          <Add/>
-          New Product
-        </Button>
-      </Stack>
-
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        checkboxSelection
-        getRowClassName={(params) => {
-          if (params.row.quantity === 0) return 'MuiDataGrid-rowError';
-          if (params.row.quantity < params.row.minQuantity) return 'MuiDataGrid-rowWarning';
-          return '';
-        }}
-      />
-    </>
-
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      checkboxSelection
+      getRowClassName={(params) => {
+        if (params.row.quantity === 0) return 'MuiDataGrid-rowError';
+        if (params.row.quantity < params.row.minQuantity) return 'MuiDataGrid-rowWarning';
+        return '';
+      }}
+      slots={{toolbar: EditToolbar as GridSlots['toolbar']}}
+      slotProps={{toolbar: {setRows, setRowModesModel}}}
+    />
   );
 }
