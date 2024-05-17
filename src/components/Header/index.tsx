@@ -3,9 +3,8 @@ import {AppBar, IconButton, Toolbar, Typography} from '@mui/material';
 
 export default function Header({handleDrawerToggle}: { handleDrawerToggle: () => void }) {
   return (
-    // TODO apply z-index programmatically from theme: "zIndex: (theme) => theme.zIndex.drawer + 1"
     // TODO style navbar like drawer component
-    <AppBar position="fixed" color="default" sx={{zIndex: 1301}}>
+    <AppBar position="fixed" color="default">
       <Toolbar>
         <IconButton
           onClick={handleDrawerToggle}
