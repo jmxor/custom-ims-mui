@@ -38,8 +38,13 @@ export default function ProductDetailsDialog({open, setOpen, addProduct}: {
   });
 
   const validateField = (field: string, value: string): string[] => {
-    if (value == '') return ['Required field'];
-    if (['quantityStock', 'quantityOrdered', 'quantityWarn', 'price'].includes(field) && isNaN(+value)) return ['Must be a positive integer'];
+    if (field == 'sku' && !value.match('^.+$')) return ['An SKU is required.'];
+    if (field == 'description' && !value.match('^.+$')) return ['A description is required.'];
+    if (field == 'quantityStock' && !value.match('^\\d+$')) return ['A positive integer stock quantity is required'];
+    if (field == 'quantityOrdered' && !value.match('^\\d+$')) return ['A positive integer ordered quantity is required'];
+    if (field == 'quantityWarn' && !value.match('^[+]?\\d+$')) return ['A positive integer low stock level is required'];
+    if (field == 'price' && !value.match('^\\d+[.]?(\\d{1,2})?$')) return ['A price is required with up to 2dp'];
+    // if (field == 'location' && !value.match('^$')) return [];
     return [];
   };
 
@@ -104,6 +109,7 @@ export default function ProductDetailsDialog({open, setOpen, addProduct}: {
 
             <Grid item xs={12}>
               <TextField
+                required
                 autoFocus
                 fullWidth
                 id="sku"
